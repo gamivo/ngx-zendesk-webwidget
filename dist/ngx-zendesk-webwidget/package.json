@@ -1,0 +1,45 @@
+{
+  "name": "ngx-zendesk-webwidget",
+  "version": "4.0.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AlisonVilela/ngx-zendesk-webwidget.git"
+  },
+  "author": {
+    "name": "Alison Vilela",
+    "email": "alison.vilela@live.nl"
+  },
+  "keywords": [
+    "angular"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/AlisonVilela/ngx-zendesk-webwidget/issues"
+  },
+  "peerDependencies": {
+    "@angular/core": "^14.0.0"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "module": "fesm2015/ngx-zendesk-webwidget.mjs",
+  "es2020": "fesm2020/ngx-zendesk-webwidget.mjs",
+  "esm2020": "esm2020/ngx-zendesk-webwidget.mjs",
+  "fesm2020": "fesm2020/ngx-zendesk-webwidget.mjs",
+  "fesm2015": "fesm2015/ngx-zendesk-webwidget.mjs",
+  "typings": "index.d.ts",
+  "exports": {
+    "./package.json": {
+      "default": "./package.json"
+    },
+    ".": {
+      "types": "./index.d.ts",
+      "esm2020": "./esm2020/ngx-zendesk-webwidget.mjs",
+      "es2020": "./fesm2020/ngx-zendesk-webwidget.mjs",
+      "es2015": "./fesm2015/ngx-zendesk-webwidget.mjs",
+      "node": "./fesm2015/ngx-zendesk-webwidget.mjs",
+      "default": "./fesm2020/ngx-zendesk-webwidget.mjs"
+    }
+  },
+  "sideEffects": false
+}
