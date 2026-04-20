@@ -1,6 +1,7 @@
-import { ModuleWithProviders, Type } from '@angular/core';
+import { ModuleWithProviders, Type, EnvironmentProviders } from '@angular/core';
 import { NgxZendeskWebwidgetConfig } from './ngx-zendesk-webwidget.model';
 import * as i0 from "@angular/core";
+export declare function provideNgxZendeskWebwidget(zendeskConfig: Type<NgxZendeskWebwidgetConfig>): EnvironmentProviders;
 export declare class NgxZendeskWebwidgetModule {
     static forRoot(zendeskConfig: Type<NgxZendeskWebwidgetConfig>): ModuleWithProviders<NgxZendeskWebwidgetModule>;
     static ɵfac: i0.ɵɵFactoryDeclaration<NgxZendeskWebwidgetModule, never>;

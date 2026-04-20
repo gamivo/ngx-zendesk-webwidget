@@ -1,35 +1,36 @@
 import * as i0 from '@angular/core';
-import { Injectable, NgModule } from '@angular/core';
+import { PLATFORM_ID, Injectable, Inject, makeEnvironmentProviders, NgModule } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 class NgxZendeskWebwidgetConfig {
 }
 
-function getWindow() {
-    return window;
-}
 class NgxZendeskWebwidgetService {
-    constructor(ngxZendeskWebwidgetConfig) {
+    constructor(ngxZendeskWebwidgetConfig, platformId) {
         this.ngxZendeskWebwidgetConfig = ngxZendeskWebwidgetConfig;
         this.initialized = false;
         if (!this.ngxZendeskWebwidgetConfig.accountUrl) {
             throw new Error('Missing accountUrl. Please set in app config via ZendeskWidgetProvider');
         }
-        this.window = getWindow();
+        this.isBrowser = isPlatformBrowser(platformId);
         if (!this.ngxZendeskWebwidgetConfig.lazyLoad) {
             this.initZendesk();
         }
     }
     initZendesk() {
-        const window = this.window;
+        if (!this.isBrowser) {
+            return Promise.resolve(false);
+        }
+        const win = window;
         const config = this.ngxZendeskWebwidgetConfig;
         // tslint:disable
-        window.zEmbed || function (e, t) {
+        win.zEmbed || function () {
             let n, o, d, i, s, a = [];
             let r = document.createElement("iframe");
-            window.zEmbed = function () {
+            win.zEmbed = function () {
                 a.push(arguments);
             };
-            window.zE = window.zE || window.zEmbed;
+            win.zE = win.zE || win.zEmbed;
             r.src = "javascript:false";
             r.title = "";
             r.style.cssText = "display: none";
@@ -64,14 +65,15 @@ class NgxZendeskWebwidgetService {
     }
     finishLoading() {
         return new Promise((resolve, reject) => {
+            const win = window;
             const timeout = setTimeout(() => {
                 this.initialized = false;
                 reject(Error('timeout'));
-            }, this.ngxZendeskWebwidgetConfig.timeOut || 30000); // 30 seconds
-            this.window.zE(() => {
-                this.ngxZendeskWebwidgetConfig.callback(this.window.zE);
+            }, this.ngxZendeskWebwidgetConfig.timeOut || 30000);
+            win.zE(() => {
+                this.ngxZendeskWebwidgetConfig.callback(win.zE);
                 this.initialized = true;
-                this._zE = this.window.zE;
+                this._zE = win.zE;
                 clearTimeout(timeout);
                 resolve(true);
             });
@@ -83,16 +85,25 @@ class NgxZendeskWebwidgetService {
     get zE() {
         return this._zE;
     }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: NgxZendeskWebwidgetService, deps: [{ token: NgxZendeskWebwidgetConfig }, { token: PLATFORM_ID }], target: i0.ɵɵFactoryTarget.Injectable }); }
+    static { this.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: NgxZendeskWebwidgetService, providedIn: 'root' }); }
 }
-NgxZendeskWebwidgetService.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "14.3.0", ngImport: i0, type: NgxZendeskWebwidgetService, deps: [{ token: NgxZendeskWebwidgetConfig }], target: i0.ɵɵFactoryTarget.Injectable });
-NgxZendeskWebwidgetService.ɵprov = i0.ɵɵngDeclareInjectable({ minVersion: "12.0.0", version: "14.3.0", ngImport: i0, type: NgxZendeskWebwidgetService, providedIn: 'root' });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.3.0", ngImport: i0, type: NgxZendeskWebwidgetService, decorators: [{
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: NgxZendeskWebwidgetService, decorators: [{
             type: Injectable,
             args: [{
                     providedIn: 'root'
                 }]
-        }], ctorParameters: function () { return [{ type: NgxZendeskWebwidgetConfig }]; } });
+        }], ctorParameters: () => [{ type: NgxZendeskWebwidgetConfig }, { type: undefined, decorators: [{
+                    type: Inject,
+                    args: [PLATFORM_ID]
+                }] }] });
 
+function provideNgxZendeskWebwidget(zendeskConfig) {
+    return makeEnvironmentProviders([
+        { provide: NgxZendeskWebwidgetConfig, useClass: zendeskConfig },
+        { provide: NgxZendeskWebwidgetService, useClass: NgxZendeskWebwidgetService, deps: [NgxZendeskWebwidgetConfig] }
+    ]);
+}
 class NgxZendeskWebwidgetModule {
     static forRoot(zendeskConfig) {
         return {
@@ -103,11 +114,11 @@ class NgxZendeskWebwidgetModule {
             ]
         };
     }
+    static { this.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: NgxZendeskWebwidgetModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule }); }
+    static { this.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "14.0.0", version: "18.2.14", ngImport: i0, type: NgxZendeskWebwidgetModule }); }
+    static { this.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: NgxZendeskWebwidgetModule }); }
 }
-NgxZendeskWebwidgetModule.ɵfac = i0.ɵɵngDeclareFactory({ minVersion: "12.0.0", version: "14.3.0", ngImport: i0, type: NgxZendeskWebwidgetModule, deps: [], target: i0.ɵɵFactoryTarget.NgModule });
-NgxZendeskWebwidgetModule.ɵmod = i0.ɵɵngDeclareNgModule({ minVersion: "14.0.0", version: "14.3.0", ngImport: i0, type: NgxZendeskWebwidgetModule });
-NgxZendeskWebwidgetModule.ɵinj = i0.ɵɵngDeclareInjector({ minVersion: "12.0.0", version: "14.3.0", ngImport: i0, type: NgxZendeskWebwidgetModule });
-i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.3.0", ngImport: i0, type: NgxZendeskWebwidgetModule, decorators: [{
+i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "18.2.14", ngImport: i0, type: NgxZendeskWebwidgetModule, decorators: [{
             type: NgModule,
             args: [{}]
         }] });
@@ -116,5 +127,5 @@ i0.ɵɵngDeclareClassMetadata({ minVersion: "12.0.0", version: "14.3.0", ngImpor
  * Generated bundle index. Do not edit.
  */
 
-export { NgxZendeskWebwidgetConfig, NgxZendeskWebwidgetModule, NgxZendeskWebwidgetService };
+export { NgxZendeskWebwidgetConfig, NgxZendeskWebwidgetModule, NgxZendeskWebwidgetService, provideNgxZendeskWebwidget };
 //# sourceMappingURL=ngx-zendesk-webwidget.mjs.map

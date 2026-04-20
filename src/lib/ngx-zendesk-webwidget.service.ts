@@ -1,26 +1,26 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 
 import { NgxZendeskWebwidgetConfig } from './ngx-zendesk-webwidget.model';
-
-function getWindow(): any {
-  return window;
-}
 
 @Injectable({
   providedIn: 'root'
 })
 export class NgxZendeskWebwidgetService {
 
-  private readonly window: any;
+  private readonly isBrowser: boolean;
   private initialized = false;
   private _zE: any;
 
-  constructor(private ngxZendeskWebwidgetConfig: NgxZendeskWebwidgetConfig) {
+  constructor(
+    private ngxZendeskWebwidgetConfig: NgxZendeskWebwidgetConfig,
+    @Inject(PLATFORM_ID) platformId: object
+  ) {
     if (!this.ngxZendeskWebwidgetConfig.accountUrl) {
       throw new Error('Missing accountUrl. Please set in app config via ZendeskWidgetProvider');
     }
 
-    this.window = getWindow();
+    this.isBrowser = isPlatformBrowser(platformId);
 
     if (!this.ngxZendeskWebwidgetConfig.lazyLoad) {
       this.initZendesk();
@@ -28,17 +28,21 @@ export class NgxZendeskWebwidgetService {
   }
 
   public initZendesk(): Promise<boolean> {
-    const window = this.window;
+    if (!this.isBrowser) {
+      return Promise.resolve(false);
+    }
+
+    const win = window as any;
     const config = this.ngxZendeskWebwidgetConfig;
 
     // tslint:disable
-    window.zEmbed || function(e, t) {
-      let n, o, d, i, s, a = []
+    win.zEmbed || function() {
+      let n: any, o: any, d: any, i: any, s: any, a: any[] = []
       let r = document.createElement("iframe")
-      window.zEmbed = function() {
+      win.zEmbed = function() {
         a.push(arguments)
       }
-      window.zE = window.zE || window.zEmbed
+      win.zE = win.zE || win.zEmbed
       r.src = "javascript:false"
       r.title = ""
       r.style.cssText = "display: none"
@@ -74,16 +78,17 @@ export class NgxZendeskWebwidgetService {
 
   private finishLoading(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
+      const win = window as any;
 
       const timeout = setTimeout(() => {
         this.initialized = false;
         reject(Error('timeout'));
-      }, this.ngxZendeskWebwidgetConfig.timeOut || 30000); // 30 seconds
+      }, this.ngxZendeskWebwidgetConfig.timeOut || 30000);
 
-      this.window.zE(() => {
-        this.ngxZendeskWebwidgetConfig.callback(this.window.zE);
+      win.zE(() => {
+        this.ngxZendeskWebwidgetConfig.callback(win.zE);
         this.initialized = true;
-        this._zE = this.window.zE;
+        this._zE = win.zE;
         clearTimeout(timeout);
         resolve(true);
       });
@@ -95,6 +100,6 @@ export class NgxZendeskWebwidgetService {
   }
 
   get zE(): any {
-    return this._zE
+    return this._zE;
   }
 }

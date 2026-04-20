@@ -2,19 +2,20 @@
 {
   "compilerOptions": {
     "declaration": true,
-    "module": "es2015",
-    "target": "es5",
+    "module": "ES2022",
+    "target": "ES2022",
     "baseUrl": "./src",
     "stripInternal": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "outDir": "./build",
     "rootDir": "./src",
     "lib": [
-      "es2015",
+      "ES2022",
       "dom"
     ],
+    "useDefineForClassFields": false,
     "skipLibCheck": true,
     "types": []
   },

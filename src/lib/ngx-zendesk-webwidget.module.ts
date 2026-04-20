@@ -1,6 +1,13 @@
-import { NgModule, ModuleWithProviders, Type } from '@angular/core'
+import { NgModule, ModuleWithProviders, Type, EnvironmentProviders, makeEnvironmentProviders } from '@angular/core'
 import { NgxZendeskWebwidgetConfig } from './ngx-zendesk-webwidget.model'
 import { NgxZendeskWebwidgetService } from './ngx-zendesk-webwidget.service'
+
+export function provideNgxZendeskWebwidget(zendeskConfig: Type<NgxZendeskWebwidgetConfig>): EnvironmentProviders {
+  return makeEnvironmentProviders([
+    { provide: NgxZendeskWebwidgetConfig, useClass: zendeskConfig },
+    { provide: NgxZendeskWebwidgetService, useClass: NgxZendeskWebwidgetService, deps: [NgxZendeskWebwidgetConfig] }
+  ]);
+}
 
 @NgModule({})
 export class NgxZendeskWebwidgetModule {
@@ -8,8 +15,8 @@ export class NgxZendeskWebwidgetModule {
     return {
       ngModule: NgxZendeskWebwidgetModule,
       providers: [
-        {provide: NgxZendeskWebwidgetConfig, useClass: zendeskConfig },
-        {provide: NgxZendeskWebwidgetService, useClass: NgxZendeskWebwidgetService, deps: [NgxZendeskWebwidgetConfig] }
+        { provide: NgxZendeskWebwidgetConfig, useClass: zendeskConfig },
+        { provide: NgxZendeskWebwidgetService, useClass: NgxZendeskWebwidgetService, deps: [NgxZendeskWebwidgetConfig] }
       ]
     }
   }
